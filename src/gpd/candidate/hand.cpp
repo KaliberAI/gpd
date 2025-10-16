@@ -67,6 +67,7 @@ void Hand::print() const {
   std::cout << "approach: " << getApproach().transpose() << std::endl;
   std::cout << "binormal: " << getBinormal().transpose() << std::endl;
   std::cout << "axis: " << getAxis().transpose() << std::endl;
+  std::cout << "grasp width: " << getGraspWidth() << std::endl;
   std::cout << "score: " << getScore() << std::endl;
   std::cout << "full-antipodal: " << isFullAntipodal() << std::endl;
   std::cout << "half-antipodal: " << isHalfAntipodal() << std::endl;

@@ -1,6 +1,27 @@
 #include <gpd/grasp_detector.h>
+#include <string>
 
 namespace gpd {
+
+// Helper function to get directory path from file path
+std::string getDirectoryPath(const std::string& filepath) {
+  size_t lastSlash = filepath.find_last_of("/\\");
+  if (lastSlash != std::string::npos) {
+    return filepath.substr(0, lastSlash);
+  }
+  return "";
+}
+
+// Helper function to join paths
+std::string joinPaths(const std::string& dir, const std::string& filename) {
+  if (dir.empty()) {
+    return filename;
+  }
+  if (dir.back() == '/' || dir.back() == '\\') {
+    return dir + filename;
+  }
+  return dir + "/" + filename;
+}
 
 GraspDetector::GraspDetector(const std::string &config_filename) {
   Eigen::initParallel();
@@ -9,11 +30,17 @@ GraspDetector::GraspDetector(const std::string &config_filename) {
   util::ConfigFile config_file(config_filename);
   config_file.ExtractKeys();
 
+  std::string config_dir = getDirectoryPath(config_filename);
+  std::string root_dir = getDirectoryPath(config_dir);
+  std::string model_dir = joinPaths(root_dir, "models");
+
   // Read hand geometry parameters.
   std::string hand_geometry_filename =
       config_file.getValueOfKeyAsString("hand_geometry_filename", "");
   if (hand_geometry_filename == "0") {
     hand_geometry_filename = config_filename;
+  } else {
+    hand_geometry_filename = joinPaths(config_dir, hand_geometry_filename);
   }
   candidate::HandGeometry hand_geom(hand_geometry_filename);
   std::cout << hand_geom;
@@ -128,6 +155,8 @@ GraspDetector::GraspDetector(const std::string &config_filename) {
       config_file.getValueOfKeyAsString("image_geometry_filename", "");
   if (image_geometry_filename == "0") {
     image_geometry_filename = config_filename;
+  } else {
+    image_geometry_filename = joinPaths(config_dir, image_geometry_filename);
   }
   descriptor::ImageGeometry image_geom(image_geometry_filename);
   std::cout << image_geom;
@@ -136,6 +165,9 @@ GraspDetector::GraspDetector(const std::string &config_filename) {
   std::string model_file = config_file.getValueOfKeyAsString("model_file", "");
   std::string weights_file =
       config_file.getValueOfKeyAsString("weights_file", "");
+
+  weights_file = joinPaths(model_dir, weights_file);
+
   if (!model_file.empty() || !weights_file.empty()) {
     int device = config_file.getValueOfKey<int>("device", 0);
     int batch_size = config_file.getValueOfKey<int>("batch_size", 1);

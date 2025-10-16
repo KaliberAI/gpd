@@ -88,6 +88,10 @@ int DoMain(int argc, char *argv[]) {
     detector.saveGrasps(grasps, save_grasps_filename);
   }
 
+  for (int i = 0; i < grasps.size(); i++) {
+    grasps[i]->print();
+  }
+
   return 0;
 }
 
