@@ -81,6 +81,8 @@ class HandSearch {
     int num_threads_;             ///< the number of CPU threads to be used
     int num_samples_;             ///< the number of samples to be used
     int num_orientations_;        ///< number of hand orientations to evaluate
+    double min_range_;            ///< minimum range of the hand orientations
+    double max_range_;            ///< maximum range of the hand orientations
     int num_finger_placements_;   ///< number of finger placements to evaluate
     std::vector<int> hand_axes_;  ///< the axes about which different hand
                                   /// orientations are generated

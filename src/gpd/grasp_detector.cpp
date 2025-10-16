@@ -74,6 +74,10 @@ GraspDetector::GraspDetector(const std::string &config_filename) {
       config_file.getValueOfKey<int>("num_threads", 1);
   hand_search_params.num_orientations_ =
       config_file.getValueOfKey<int>("num_orientations", 8);
+  hand_search_params.min_range_ =
+      config_file.getValueOfKey<double>("min_range", -0.2618);
+  hand_search_params.max_range_ =
+      config_file.getValueOfKey<double>("max_range", 0.2618);
   hand_search_params.num_finger_placements_ =
       config_file.getValueOfKey<int>("num_finger_placements", 10);
   hand_search_params.deepen_hand_ =
@@ -105,6 +109,8 @@ GraspDetector::GraspDetector(const std::string &config_filename) {
   printf("nn_radius: %3.2f\n", hand_search_params.nn_radius_frames_);
   printStdVector(hand_search_params.hand_axes_, "hand axes");
   printf("num_orientations: %d\n", hand_search_params.num_orientations_);
+  printf("min_range: %3.4f\n", hand_search_params.min_range_);
+  printf("max_range: %3.4f\n", hand_search_params.max_range_);
   printf("num_finger_placements: %d\n",
          hand_search_params.num_finger_placements_);
   printf("deepen_hand: %s\n",
@@ -325,6 +331,18 @@ std::vector<std::unique_ptr<candidate::Hand>> GraspDetector::detectGrasps(
   }
 
   return clusters;
+}
+
+void GraspDetector::saveGrasps(const std::vector<std::unique_ptr<candidate::Hand>> &grasps, const std::string &filename) {
+  // Convert unique_ptr vector to regular vector for writeHandsToFile
+  std::vector<candidate::Hand> hands;
+  hands.reserve(grasps.size());
+  for (const auto& grasp : grasps) {
+    hands.push_back(*grasp);
+  }
+  
+  candidate::Hand::writeHandsToFile(filename, hands);
+  std::cout << "Saved grasps to file: " << filename << std::endl;
 }
 
 void GraspDetector::preprocessPointCloud(util::Cloud &cloud) {

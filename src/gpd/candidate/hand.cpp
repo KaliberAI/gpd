@@ -45,19 +45,18 @@ void Hand::calculateGraspPositions(const FingerHand &finger_hand) {
 }
 
 void Hand::writeHandsToFile(const std::string &filename,
-                            const std::vector<Hand> &hands) const {
+                            const std::vector<Hand> &hands) {
   std::ofstream myfile;
   myfile.open(filename.c_str());
 
   for (int i = 0; i < hands.size(); i++) {
-    std::cout << "Hand " << i << std::endl;
-    print();
 
-    myfile << vectorToString(hands[i].getPosition())
-           << vectorToString(hands[i].getAxis())
-           << vectorToString(hands[i].getApproach())
-           << vectorToString(hands[i].getBinormal())
-           << std::to_string(hands[i].getGraspWidth()) << "\n";
+    myfile  << hands[i].vectorToString(hands[i].getPosition())
+            << hands[i].vectorToString(hands[i].getApproach())
+            << hands[i].vectorToString(hands[i].getBinormal())
+            << hands[i].vectorToString(hands[i].getAxis())
+            << std::to_string(hands[i].getGraspWidth())
+            << std::to_string(hands[i].getScore()) << "\n";
   }
 
   myfile.close();

@@ -148,11 +148,26 @@ std::vector<std::unique_ptr<candidate::HandSet>> HandSearch::evalHands(
   double t1 = omp_get_wtime();
 
   // possible angles used for hand orientations
-  const Eigen::VectorXd angles_space = Eigen::VectorXd::LinSpaced(
-      params_.num_orientations_ + 1, -1.0 * M_PI / 2.0, M_PI / 2.0);
+  // We ensure that 0 is always included as an orientation (unless already present).
+  Eigen::VectorXd angles_space = Eigen::VectorXd::LinSpaced(
+      params_.num_orientations_ + 1, params_.min_range_, params_.max_range_);
 
-  // necessary b/c assignment in Eigen does not change vector size
-  const Eigen::VectorXd angles = angles_space.head(params_.num_orientations_);
+  Eigen::VectorXd angles = angles_space.head(params_.num_orientations_);
+  // Check if 0 is (approximately) already present; append if not
+  bool has_zero = false;
+  for (int i = 0; i < angles.size(); ++i) {
+    if (std::abs(angles[i]) < 1e-8) {
+      has_zero = true;
+      break;
+    }
+  }
+  if (!has_zero) {
+    // Create new vector with one additional entry to hold 0
+    Eigen::VectorXd angles_with_zero(angles.size() + 1);
+    angles_with_zero.head(angles.size()) = angles;
+    angles_with_zero[angles.size()] = 0.0;
+    angles = angles_with_zero;
+  }
 
   std::vector<int> nn_indices;
   std::vector<float> nn_dists;

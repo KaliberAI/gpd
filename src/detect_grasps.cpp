@@ -21,9 +21,10 @@ int DoMain(int argc, char *argv[]) {
   // Read arguments from command line.
   if (argc < 3) {
     std::cout << "Error: Not enough input arguments!\n\n";
-    std::cout << "Usage: detect_grasps CONFIG_FILE PCD_FILE [NORMALS_FILE]\n\n";
+    std::cout << "Usage: detect_grasps CONFIG_FILE PCD_FILE [SAVE_GRASPS_FILE] [NORMALS_FILE]\n\n";
     std::cout << "Detect grasp poses for a point cloud, PCD_FILE (*.pcd), "
                  "using parameters from CONFIG_FILE (*.cfg).\n\n";
+    std::cout << "[SAVE_GRASPS_FILE] (optional) the filename to save the grasps to\n\n";
     std::cout << "[NORMALS_FILE] (optional) contains a surface normal for each "
                  "point in the cloud (*.csv).\n";
     return (-1);
@@ -38,7 +39,7 @@ int DoMain(int argc, char *argv[]) {
   if (!checkFileExists(pcd_filename)) {
     printf("Error: PCD file not found!\n");
     return (-1);
-  }
+  } 
 
   // Read parameters from configuration file.
   util::ConfigFile config_file(config_filename);
@@ -59,8 +60,8 @@ int DoMain(int argc, char *argv[]) {
   }
 
   // Load surface normals from file.
-  if (argc > 3) {
-    std::string normals_filename = argv[3];
+  if (argc > 4) {
+    std::string normals_filename = argv[4];
     cloud.setNormalsFromFile(normals_filename);
     std::cout << "Loaded surface normals from file: " << normals_filename
               << "\n";
@@ -80,7 +81,12 @@ int DoMain(int argc, char *argv[]) {
   }
 
   // Detect grasp poses.
-  detector.detectGrasps(cloud);
+  std::vector<std::unique_ptr<candidate::Hand>> grasps = detector.detectGrasps(cloud);
+
+  if (argc > 3) {
+    std::string save_grasps_filename = argv[3];
+    detector.saveGrasps(grasps, save_grasps_filename);
+  }
 
   return 0;
 }

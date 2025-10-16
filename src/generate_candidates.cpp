@@ -85,6 +85,8 @@ int DoMain(int argc, char *argv[]) {
   int num_threads = config_file.getValueOfKey<int>("num_threads", 1);
   double nn_radius = config_file.getValueOfKey<double>("nn_radius", 0.01);
   int num_orientations = config_file.getValueOfKey<int>("num_orientations", 8);
+  double min_range = config_file.getValueOfKey<double>("min_range", -0.2618);
+  double max_range = config_file.getValueOfKey<double>("max_range", 0.2618);
   int num_finger_placements =
       config_file.getValueOfKey<int>("num_finger_placements", 10);
   std::vector<int> hand_axes =
@@ -93,6 +95,8 @@ int DoMain(int argc, char *argv[]) {
   std::cout << "num_threads: " << num_threads << "\n";
   std::cout << "nn_radius: " << nn_radius << "\n";
   std::cout << "num_orientations: " << num_orientations << "\n";
+  std::cout << "min_range: " << min_range << "\n";
+  std::cout << "max_range: " << max_range << "\n";
   std::cout << "num_finger_placements: " << num_finger_placements << "\n";
   printf("hand_axes: ");
   for (int i = 0; i < hand_axes.size(); ++i) {
@@ -118,6 +122,8 @@ int DoMain(int argc, char *argv[]) {
   hand_search_params.hand_geometry_ = hand_geom;
   hand_search_params.nn_radius_frames_ = nn_radius;
   hand_search_params.num_orientations_ = num_orientations;
+  hand_search_params.min_range_ = min_range;
+  hand_search_params.max_range_ = max_range;
   hand_search_params.num_finger_placements_ = num_finger_placements;
   hand_search_params.num_samples_ = num_samples;
   hand_search_params.num_threads_ = num_threads;

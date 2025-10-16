@@ -80,6 +80,13 @@ class GraspDetector {
       const util::Cloud &cloud);
 
   /**
+   * \brief Save grasps to a file.
+   * \param grasps the list of grasps
+   * \param filename the filename to save the grasps to
+   */
+  void saveGrasps(const std::vector<std::unique_ptr<candidate::Hand>> &grasps, const std::string &filename);
+
+  /**
    * \brief Preprocess the point cloud.
    * \param cloud_cam the point cloud
    */
