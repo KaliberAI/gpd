@@ -55,7 +55,7 @@ void Hand::writeHandsToFile(const std::string &filename,
             << hands[i].vectorToString(hands[i].getApproach())
             << hands[i].vectorToString(hands[i].getBinormal())
             << hands[i].vectorToString(hands[i].getAxis())
-            << std::to_string(hands[i].getGraspWidth())
+            << std::to_string(hands[i].getGraspWidth()) << ","
             << std::to_string(hands[i].getScore()) << "\n";
   }
 
