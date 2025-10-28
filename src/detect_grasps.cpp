@@ -83,13 +83,18 @@ int DoMain(int argc, char *argv[]) {
   // Detect grasp poses.
   std::vector<std::unique_ptr<candidate::Hand>> grasps = detector.detectGrasps(cloud);
 
-  if (argc > 3) {
-    std::string save_grasps_filename = argv[3];
-    detector.saveGrasps(grasps, save_grasps_filename);
-  }
-
-  for (int i = 0; i < grasps.size(); i++) {
-    grasps[i]->print();
+  if (grasps.size() > 0) {
+    printf("Found %ld grasps\n", grasps.size());
+    for (int i = 0; i < grasps.size(); i++) {
+      grasps[i]->print();
+    }
+    
+    if (argc > 3) {
+      std::string save_grasps_filename = argv[3];
+      detector.saveGrasps(grasps, save_grasps_filename);
+    }
+  } else {
+    printf("No grasps found\n");
   }
 
   return 0;
